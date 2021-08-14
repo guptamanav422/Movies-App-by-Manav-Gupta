@@ -10,12 +10,23 @@ class App extends React.Component{
     movies:[],
     genre:[],
     selectedFilter: "All Genre",
+    search:"",
   }
 
   setFilter=(filter)=>{
     this.setState({selectedFilter:filter})
   }
 
+  updateSearch=(seachString)=>{
+    this.setState({search:seachString})
+  }
+
+  deleteMovie=(id)=>{
+    let filteredArr=this.state.movies.filter((el)=>{
+      return el._id!==id;
+    });
+    this.setState({movies:filteredArr})
+  }
   toggleLike=(id)=>{
     let index=this.state.movies.findIndex((el)=>{
       return el._id===id;
@@ -55,8 +66,14 @@ class App extends React.Component{
        <div className="row">
           <Filter handleFilter={this.setFilter} selectedFilter={this.state.selectedFilter} genreData={this.state.genre}/>
           <div className="col-9 p-4">
-            <Search />
+            <Search
+            search={this.state.search} 
+            updateSearch={this.updateSearch}
+            total={this.state.movies.length}
+            />
             <Table
+            search={this.state.search}
+            deleteMovie={this.deleteMovie}
             toggleLike={this.toggleLike}
             selectedFilter={this.state.selectedFilter}
              moviesData={this.state.movies}/>

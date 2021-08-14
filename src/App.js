@@ -1,85 +1,104 @@
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import React from "react";
 import Navbar from "./Navbar.jsx";
 import Filter from "./Filter.jsx"
 import Search from "./Search.jsx";
-import Table from "./Table.jsx"; 
+import Table from "./Table.jsx";
+import Login from "./Login.jsx";
+import Rental from "./Rentals.jsx";
+import Customer from "./Customer.jsx";
 
-class App extends React.Component{
-  
-  state={
-    movies:[],
-    genre:[],
+class App extends React.Component {
+
+  state = {
+    movies: [],
+    genre: [],
     selectedFilter: "All Genre",
-    search:"",
+    search: "",
   }
 
-  setFilter=(filter)=>{
-    this.setState({selectedFilter:filter})
+  setFilter = (filter) => {
+    this.setState({ selectedFilter: filter })
   }
 
-  updateSearch=(seachString)=>{
-    this.setState({search:seachString})
+  updateSearch = (seachString) => {
+    this.setState({ search: seachString })
   }
 
-  deleteMovie=(id)=>{
-    let filteredArr=this.state.movies.filter((el)=>{
-      return el._id!==id;
+  deleteMovie = (id) => {
+    let filteredArr = this.state.movies.filter((el) => {
+      return el._id !== id;
     });
-    this.setState({movies:filteredArr})
+    this.setState({ movies: filteredArr })
   }
-  toggleLike=(id)=>{
-    let index=this.state.movies.findIndex((el)=>{
-      return el._id===id;
+  toggleLike = (id) => {
+    let index = this.state.movies.findIndex((el) => {
+      return el._id === id;
     });
     // console.log(index);
 
-    let currMoviesArr= this.state.movies.map((el)=>el);
+    let currMoviesArr = this.state.movies.map((el) => el);
 
-    if(currMoviesArr[index].liked){
-      currMoviesArr[index].liked=false;
+    if (currMoviesArr[index].liked) {
+      currMoviesArr[index].liked = false;
     }
-    else{
-      currMoviesArr[index].liked=true;
+    else {
+      currMoviesArr[index].liked = true;
     }
 
-    this.setState({movies:currMoviesArr});
+    this.setState({ movies: currMoviesArr });
   }
-  componentDidMount(){
+  componentDidMount() {
 
-    let f= async ()=>{
-      let responseGenre= await fetch("./genre");
-      let responseMovies= await fetch("./movies");
+    let f = async () => {
+      let responseGenre = await fetch("./genre");
+      let responseMovies = await fetch("./movies");
 
-      let moviesJson=await responseMovies.json();
-      let genreJson=await responseGenre.json();
+      let moviesJson = await responseMovies.json();
+      let genreJson = await responseGenre.json();
       this.setState({
-        movies:moviesJson,
-        genre:genreJson
+        movies: moviesJson,
+        genre: genreJson
       })
     }
     f();
   }
-  render=()=>{
-    return(
-      <>
-       <Navbar />
-       <div className="row">
-          <Filter handleFilter={this.setFilter} selectedFilter={this.state.selectedFilter} genreData={this.state.genre}/>
-          <div className="col-9 p-4">
-            <Search
-            search={this.state.search} 
-            updateSearch={this.updateSearch}
-            total={this.state.movies.length}
-            />
-            <Table
-            search={this.state.search}
-            deleteMovie={this.deleteMovie}
-            toggleLike={this.toggleLike}
-            selectedFilter={this.state.selectedFilter}
-             moviesData={this.state.movies}/>
-          </div>
-       </div>
-      </>
+  render = () => {
+    return (
+      <Router>
+        <>
+          <Navbar />
+          <Switch>
+            <Route path="/rental">
+              <Rental />
+            </Route>
+            <Route path="/customer">
+              <Customer />
+            </Route>
+            <Route path="/login">
+              <Login />
+            </Route>
+            <Route path="/">
+              <div className="row">
+                <Filter handleFilter={this.setFilter} selectedFilter={this.state.selectedFilter} genreData={this.state.genre} />
+                <div className="col-9 p-4">
+                  <Search
+                    search={this.state.search}
+                    updateSearch={this.updateSearch}
+                    total={this.state.movies.length}
+                  />
+                  <Table
+                    search={this.state.search}
+                    deleteMovie={this.deleteMovie}
+                    toggleLike={this.toggleLike}
+                    selectedFilter={this.state.selectedFilter}
+                    moviesData={this.state.movies} />
+                </div>
+              </div>
+            </Route>
+          </Switch>
+        </>
+      </Router>
     )
   }
 }

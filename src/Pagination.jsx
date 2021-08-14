@@ -1,3 +1,4 @@
+import {Link} from "react-router-dom"
 let Pagination = (props) => {
   let arr = [];
   for (let i = 1; i <= props.numberOfPages; i++) {
@@ -16,7 +17,7 @@ let Pagination = (props) => {
               }}
               class={`page-item ${props.currPage === el ? "active" : ""}`}
             >
-              <a class="page-link">{el}</a>
+              <Link class="page-link">{el}</Link>
             </li>
           );
         })}

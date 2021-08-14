@@ -1,16 +1,19 @@
 import React from "react"
 import Pagination from "./Pagination"
+import "./Table.css"
 let Table = (props) => {
-    console.log(props);
 
     let allMovies=props.moviesData
     let currFilter=props.selectedFilter
 
     let filteredMoviesArr=allMovies.filter((el) => {
         if(currFilter==='All Genre') return el;
-        if(el.genre.name === currFilter) return el;
+        else if(el.genre.name === currFilter) return true;
+        return false;
     })
 
+
+    let arrToBeUsedInTable=allMovies.slice(0,4);
     return (
         <>
             <table class="table mt-4">
@@ -26,15 +29,31 @@ let Table = (props) => {
                 </thead>
                 <tbody>
                     {
-                        filteredMoviesArr.map((e) => {
+                        arrToBeUsedInTable.map((e) => {
                             return <tr key={e._id}>
                                 <td>{e.title}</td>
                                 <td>{e.genre.name}</td>
                                 <td>{e.numberInStock}</td>
                                 <td>{e.dailyRentalRate}</td>
-                                <td>Like</td>
+                                <td onClick={()=>{
+                                    // toggled like key 
+                                    props.toggleLike(e._id);
+                                }}>
+                                {e.liked ? (
+                                    <span
+                                    class="material-icons-outlined">
+                                    favorite
+                                   </span>
+                                ):(
+                                    <span
+                                    class="material-icons-outlined">
+                                    favorite_border
+                                    </span>
+                                )
+                                }
+                                </td>
                                 <td>
-                                    <button>Click</button>
+                                    <button className="table-delete-btn">Click</button>
                                 </td>
                             </tr>
                         })
